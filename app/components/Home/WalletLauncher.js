@@ -176,6 +176,7 @@ class WalletLauncher extends React.Component {
                       min="0"
                       max="100"
                       step="1"
+                      variant="thin"
                       validate={this.validateAutopilotMaxChannels}
                       validateOnBlur
                       validateOnChange={formState.invalid}
