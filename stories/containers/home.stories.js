@@ -12,8 +12,8 @@ const delay = time => new Promise(resolve => setTimeout(() => resolve(), time))
 
 const store = new Store({
   activeWallet: 'c0b4c9cee61aee28447438985ae6f770',
-  lndWalletStarted: false,
-  lndWalletUnlockerStarted: false,
+  lightningGrpcActive: false,
+  walletUnlockerGrpcActive: false,
   wallets: [
     {
       id: 'c0b4c9cee61aee28447438985ae6f770',
@@ -47,17 +47,17 @@ const store = new Store({
 const startLnd = wallet => {
   console.log('startLnd', wallet)
   delay(500)
-  store.set({ lndWalletUnlockerStarted: true, lndWalletStarted: false })
+  store.set({ walletUnlockerGrpcActive: true, lightningGrpcActive: false })
 }
 const stopLnd = () => {
   console.log('stopLnd')
   delay(500)
-  store.set({ lndWalletUnlockerStarted: false, lndWalletStarted: false })
+  store.set({ walletUnlockerGrpcActive: false, lightningGrpcActive: false })
 }
 const unlockWallet = (wallet, password) => {
   console.log('unlockWallet', wallet, password)
   delay(500)
-  store.set({ lndWalletUnlockerStarted: false, lndWalletStarted: true })
+  store.set({ walletUnlockerGrpcActive: false, lightningGrpcActive: true })
 }
 
 storiesOf('Containers.Home', module)

@@ -1,13 +1,14 @@
 import { connect } from 'react-redux'
 import { walletSelectors } from 'reducers/wallet'
-import { stopLnd, startLnd, unlockWallet } from 'reducers/onboarding'
+import { stopLnd, startLnd, unlockWallet } from 'reducers/lnd'
 import { Home } from 'components/Home'
 
 const mapStateToProps = state => ({
   wallets: state.wallet.wallets,
+  activeWallet: walletSelectors.activeWallet(state),
   activeWalletSettings: walletSelectors.activeWalletSettings(state),
-  lndWalletStarted: state.onboarding.lndWalletStarted,
-  lndWalletUnlockerStarted: state.onboarding.lndWalletUnlockerStarted
+  lightningGrpcActive: state.lnd.lightningGrpcActive,
+  walletUnlockerGrpcActive: state.lnd.walletUnlockerGrpcActive
 })
 
 const mapDispatchToProps = {

@@ -18,6 +18,7 @@ class Syncing extends Component {
     syncStatus: PropTypes.string.isRequired,
     syncPercentage: PropTypes.number,
     blockHeight: PropTypes.number,
+    setIsWalletOpen: PropTypes.func,
     lndBlockHeight: PropTypes.number,
     lndCfilterHeight: PropTypes.number
   }
@@ -28,8 +29,9 @@ class Syncing extends Component {
     syncMessageExtraDetail: null
   }
 
-  componentWillMount() {
-    const { syncStatus, intl } = this.props
+  componentDidMount() {
+    const { setIsWalletOpen, syncStatus, intl } = this.props
+    setIsWalletOpen(true)
 
     // If we are still waiting for peers after some time, advise te user it could take a wile.
     let timer = setTimeout(() => {

@@ -21,7 +21,7 @@ class WalletUnlocker extends React.Component {
   static propTypes = {
     wallets: PropTypes.array.isRequired,
     walletId: PropTypes.string.isRequired,
-    lndWalletStarted: PropTypes.bool.isRequired,
+    lightningGrpcActive: PropTypes.bool.isRequired,
     unlockWallet: PropTypes.func.isRequired,
     history: PropTypes.shape({
       push: PropTypes.func.isRequired
@@ -32,10 +32,10 @@ class WalletUnlocker extends React.Component {
    * Redirect to the login page when we establish a connection to lnd.
    */
   componentDidUpdate(prevProps) {
-    const { history, lndWalletStarted } = this.props
+    const { history, lightningGrpcActive } = this.props
 
     // If an active wallet connection has been established, switch to the app.
-    if (lndWalletStarted && !prevProps.lndWalletStarted) {
+    if (lightningGrpcActive && !prevProps.lightningGrpcActive) {
       if (this.getWallet().type === 'local') {
         history.push('/syncing')
       } else {

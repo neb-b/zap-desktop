@@ -6,29 +6,27 @@ import db from 'store/db'
 // ------------------------------------
 export const SET_WALLETS = 'SET_WALLETS'
 export const SET_ACTIVE_WALLET = 'SET_ACTIVE_WALLET'
+export const SET_IS_WALLET_OPEN = 'SET_IS_WALLET_OPEN'
 
 // ------------------------------------
 // Actions
 // ------------------------------------
 
-export const initWallets = () => async dispatch => {
-  let wallets
-  let activeWallet
-  try {
-    wallets = await db.wallets.toArray()
-    activeWallet = await db.settings.get({ key: 'activeWallet' })
-    activeWallet = activeWallet.value
-  } catch (e) {
-    wallets = []
-  }
-  dispatch(setWallets(wallets))
-  dispatch(setActiveWallet(activeWallet))
-}
-
 export function setWallets(wallets) {
   return {
     type: SET_WALLETS,
     wallets
+  }
+}
+
+export function setIsWalletOpen(isWalletOpen) {
+  db.settings.put({
+    key: 'isWalletOpen',
+    value: isWalletOpen
+  })
+  return {
+    type: SET_IS_WALLET_OPEN,
+    isWalletOpen
   }
 }
 
@@ -43,12 +41,33 @@ export function setActiveWallet(activeWallet) {
   }
 }
 
+export const initWallets = () => async dispatch => {
+  let wallets
+  let activeWallet
+  let isWalletOpen = false
+  try {
+    wallets = await db.wallets.toArray()
+
+    activeWallet = await db.settings.get({ key: 'activeWallet' })
+    activeWallet = activeWallet.value
+
+    isWalletOpen = await db.settings.get({ key: 'isWalletOpen' })
+    isWalletOpen = isWalletOpen.value
+  } catch (e) {
+    wallets = []
+  }
+  dispatch(setWallets(wallets))
+  dispatch(setIsWalletOpen(isWalletOpen))
+  dispatch(setActiveWallet(activeWallet))
+}
+
 // ------------------------------------
 // Action Handlers
 // ------------------------------------
 const ACTION_HANDLERS = {
   [SET_WALLETS]: (state, { wallets }) => ({ ...state, wallets }),
-  [SET_ACTIVE_WALLET]: (state, { activeWallet }) => ({ ...state, activeWallet })
+  [SET_ACTIVE_WALLET]: (state, { activeWallet }) => ({ ...state, activeWallet }),
+  [SET_IS_WALLET_OPEN]: (state, { isWalletOpen }) => ({ ...state, isWalletOpen })
 }
 
 // ------------------------------------
@@ -74,6 +93,7 @@ export { walletSelectors }
 // ------------------------------------
 
 const initialState = {
+  isWalletOpen: false,
   activeWallet: undefined,
   wallets: []
 }

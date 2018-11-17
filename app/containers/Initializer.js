@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
 import { walletSelectors } from 'reducers/wallet'
-import { startActiveWallet } from 'reducers/onboarding'
+import { startActiveWallet } from 'reducers/lnd'
 
 /**
  * Root component that deals with mounting the app and managing top level routing.
@@ -12,10 +12,18 @@ class Initializer extends React.Component {
   static propTypes = {
     history: PropTypes.object.isRequired,
     activeWallet: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    activeWalletSettings: PropTypes.object.isRequired,
+    activeWalletSettings: PropTypes.object,
+    isWalletOpen: PropTypes.bool,
     lightningGrpcActive: PropTypes.bool,
     walletUnlockerGrpcActive: PropTypes.bool,
     startActiveWallet: PropTypes.func.isRequired
+  }
+
+  componentDidMount() {
+    const { activeWallet, isWalletOpen } = this.props
+    if (activeWallet && isWalletOpen) {
+      startActiveWallet()
+    }
   }
 
   /**
@@ -26,14 +34,19 @@ class Initializer extends React.Component {
       history,
       activeWallet,
       activeWalletSettings,
+      isWalletOpen,
       lightningGrpcActive,
       walletUnlockerGrpcActive,
       startActiveWallet
     } = this.props
 
     // If we have just determined that the user has an active wallet, attempt to start it.
-    if (activeWallet && !prevProps.activeWallet) {
-      startActiveWallet()
+    if (typeof activeWallet !== 'undefined' && typeof prevProps.activeWallet === 'undefined') {
+      if (activeWallet && isWalletOpen) {
+        startActiveWallet()
+      } else {
+        history.push('/home')
+      }
     }
 
     // If the wallet unlocker became active, switch to the login screen
@@ -60,7 +73,8 @@ const mapStateToProps = state => ({
   activeWallet: walletSelectors.activeWallet(state),
   activeWalletSettings: walletSelectors.activeWalletSettings(state),
   lightningGrpcActive: state.lnd.lightningGrpcActive,
-  walletUnlockerGrpcActive: state.lnd.walletUnlockerGrpcActive
+  walletUnlockerGrpcActive: state.lnd.walletUnlockerGrpcActive,
+  isWalletOpen: state.wallet.isWalletOpen
 })
 
 const mapDispatchToProps = {

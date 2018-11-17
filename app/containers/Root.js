@@ -134,7 +134,7 @@ class Root extends React.Component {
                   exact
                   path="/syncing"
                   render={() => (
-                    <Modal onClose={() => history.push('/home')}>
+                    <Modal onClose={() => history.push('/logout')}>
                       <Syncing />
                     </Modal>
                   )}

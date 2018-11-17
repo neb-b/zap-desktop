@@ -7,7 +7,6 @@ class WalletsMenu extends React.Component {
   static displayName = 'WalletsMenu'
 
   static propTypes = {
-    activeWallet: PropTypes.string.isRequired,
     wallets: PropTypes.array.isRequired,
     history: PropTypes.shape({
       push: PropTypes.func.isRequired
@@ -20,11 +19,11 @@ class WalletsMenu extends React.Component {
   }
 
   render() {
-    const { activeWallet, wallets, history, match, location, staticContext, ...rest } = this.props
+    const { wallets } = this.props
     const localWallets = wallets.filter(wallet => wallet.type === 'local')
     const otherWallets = wallets.filter(wallet => wallet.type !== 'local')
     return (
-      <Menu onSelect={this.onSelect} {...rest}>
+      <Menu onSelect={this.onSelect}>
         <MenuItemGroup title="Your Wallets">
           {localWallets.map(wallet => (
             <Text key={wallet.id} py={1}>

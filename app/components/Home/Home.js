@@ -14,23 +14,29 @@ const NoMatch = () => (
 
 class Home extends React.Component {
   static propTypes = {
-    activeWallet: PropTypes.string.isRequired,
+    activeWallet: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     history: PropTypes.object.isRequired,
-    lndWalletStarted: PropTypes.bool.isRequired,
-    lndWalletUnlockerStarted: PropTypes.bool.isRequired,
+    lightningGrpcActive: PropTypes.bool.isRequired,
+    walletUnlockerGrpcActive: PropTypes.bool.isRequired,
     wallets: PropTypes.array.isRequired,
     startLnd: PropTypes.func.isRequired,
     stopLnd: PropTypes.func.isRequired,
     unlockWallet: PropTypes.func.isRequired
   }
 
+  /**
+   * If the user has an active wallet redirect to that when the component is mounted at /home.
+   */
   componentDidMount() {
     const { history, activeWallet } = this.props
-    if (activeWallet) {
+    if (activeWallet && history.location.pathname === '/home') {
       history.push(`/home/wallet/${activeWallet}`)
     }
   }
 
+  /**
+   * Handle click event on the Create new wallet button,
+   */
   handleCreateNewWalletClick = () => {
     const { history } = this.props
     history.push('/onboarding')
@@ -43,8 +49,8 @@ class Home extends React.Component {
       unlockWallet,
       wallets,
       stopLnd,
-      lndWalletStarted,
-      lndWalletUnlockerStarted
+      lightningGrpcActive,
+      walletUnlockerGrpcActive
     } = this.props
 
     return (
@@ -71,8 +77,8 @@ class Home extends React.Component {
                   walletId={params.walletId}
                   startLnd={startLnd}
                   stopLnd={stopLnd}
-                  lndWalletStarted={lndWalletStarted}
-                  lndWalletUnlockerStarted={lndWalletUnlockerStarted}
+                  lightningGrpcActive={lightningGrpcActive}
+                  walletUnlockerGrpcActive={walletUnlockerGrpcActive}
                 />
               )}
             />
@@ -84,7 +90,7 @@ class Home extends React.Component {
                   wallets={wallets}
                   walletId={params.walletId}
                   unlockWallet={unlockWallet}
-                  lndWalletStarted={lndWalletStarted}
+                  lightningGrpcActive={lightningGrpcActive}
                 />
               )}
             />

@@ -2,37 +2,24 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { withRouter } from 'react-router'
-import { walletSelectors } from 'reducers/wallet'
-import { stopLnd } from 'reducers/onboarding'
+import { restart } from 'reducers/lnd'
+import { setIsWalletOpen } from 'reducers/wallet'
 
 /**
  * Root component that deals with mounting the app and managing top level routing.
  */
 class Logout extends React.Component {
   static propTypes = {
-    history: PropTypes.object.isRequired,
     lightningGrpcActive: PropTypes.bool,
-    onboarding: PropTypes.bool,
-    stopLnd: PropTypes.func.isRequired
+    walletUnlockerGrpcActive: PropTypes.bool,
+    restart: PropTypes.func.isRequired
   }
 
   componentDidMount() {
-    const { history, lightningGrpcActive, stopLnd } = this.props
-    if (lightningGrpcActive) {
-      stopLnd()
-    } else {
-      history.push('/home')
-    }
-  }
-
-  /**
-   * Redirect to the correct page when we establish a connection to lnd.
-   */
-  componentDidUpdate(prevProps) {
-    const { history, onboarding } = this.props
-    // If we have just determined that the user has an active wallet, attempt to start it.
-    if (onboarding && !prevProps.onboarding) {
-      history.push('/home')
+    const { lightningGrpcActive, walletUnlockerGrpcActive, restart } = this.props
+    if (lightningGrpcActive || walletUnlockerGrpcActive) {
+      setIsWalletOpen(false)
+      restart()
     }
   }
 
@@ -42,13 +29,13 @@ class Logout extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  activeWallet: walletSelectors.activeWallet(state),
   lightningGrpcActive: state.lnd.lightningGrpcActive,
-  onboarding: state.onboarding.onboarding
+  walletUnlockerGrpcActive: state.lnd.walletUnlockerGrpcActive
 })
 
 const mapDispatchToProps = {
-  stopLnd
+  restart,
+  setIsWalletOpen
 }
 
 export default connect(
