@@ -15,6 +15,7 @@ const NoMatch = () => (
 class Home extends React.Component {
   static propTypes = {
     activeWallet: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    deleteWallet: PropTypes.func.isRequired,
     history: PropTypes.object.isRequired,
     lightningGrpcActive: PropTypes.bool.isRequired,
     walletUnlockerGrpcActive: PropTypes.bool.isRequired,
@@ -25,11 +26,21 @@ class Home extends React.Component {
   }
 
   /**
-   * If the user has an active wallet redirect to that when the component is mounted at /home.
+   * If the user has an active wallet when the component is mounted at /home, navigate to that wallet's launcher.
    */
   componentDidMount() {
     const { history, activeWallet } = this.props
     if (activeWallet && history.location.pathname === '/home') {
+      history.push(`/home/wallet/${activeWallet}`)
+    }
+  }
+
+  /**
+   * If the active wallet has changed, navigate to the new wallet's launcher
+   */
+  componentDidUpdate(prevProps) {
+    const { history, activeWallet } = this.props
+    if (activeWallet !== prevProps.activeWallet) {
       history.push(`/home/wallet/${activeWallet}`)
     }
   }
@@ -45,6 +56,7 @@ class Home extends React.Component {
   render() {
     const {
       activeWallet,
+      deleteWallet,
       startLnd,
       unlockWallet,
       wallets,
@@ -79,6 +91,7 @@ class Home extends React.Component {
                   stopLnd={stopLnd}
                   lightningGrpcActive={lightningGrpcActive}
                   walletUnlockerGrpcActive={walletUnlockerGrpcActive}
+                  deleteWallet={deleteWallet}
                 />
               )}
             />

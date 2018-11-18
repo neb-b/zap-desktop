@@ -41,6 +41,15 @@ export function setActiveWallet(activeWallet) {
   }
 }
 
+export const deleteWallet = walletId => (dispatch, getState) => {
+  let { wallets } = getState().wallet
+  db.wallets.delete(walletId)
+  wallets = wallets.filter(wallet => wallet.id !== walletId)
+  dispatch(setWallets(wallets))
+  dispatch(setActiveWallet(wallets[0].id))
+  setIsWalletOpen(false)
+}
+
 export const initWallets = () => async dispatch => {
   let wallets
   let activeWallet

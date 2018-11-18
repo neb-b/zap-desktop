@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import { walletSelectors } from 'reducers/wallet'
+import { walletSelectors, deleteWallet } from 'reducers/wallet'
 import { stopLnd, startLnd, unlockWallet } from 'reducers/lnd'
 import { Home } from 'components/Home'
 
@@ -14,7 +14,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
   stopLnd,
   startLnd,
-  unlockWallet
+  unlockWallet,
+  deleteWallet
 }
 
 export default connect(

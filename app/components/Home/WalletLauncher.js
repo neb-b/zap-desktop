@@ -20,6 +20,7 @@ class WalletLauncher extends React.Component {
   static propTypes = {
     wallets: PropTypes.array.isRequired,
     walletId: PropTypes.string.isRequired,
+    deleteWallet: PropTypes.func.isRequired,
     startLnd: PropTypes.func.isRequired,
     lightningGrpcActive: PropTypes.bool.isRequired,
     walletUnlockerGrpcActive: PropTypes.bool.isRequired,
@@ -107,6 +108,11 @@ class WalletLauncher extends React.Component {
     return wallets.find(wallet => wallet.id == walletId)
   }
 
+  handleDelete = () => {
+    const { deleteWallet, walletId } = this.props
+    deleteWallet(walletId)
+  }
+
   render() {
     const wallet = this.getWallet()
     if (!wallet) {
@@ -138,6 +144,9 @@ class WalletLauncher extends React.Component {
               <Box ml={2}>
                 <Button type="submit" size="small">
                   Launch now
+                </Button>
+                <Button type="button" size="small" onClick={this.handleDelete}>
+                  delete
                 </Button>
               </Box>
             </Flex>
