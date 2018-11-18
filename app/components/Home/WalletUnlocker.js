@@ -58,9 +58,11 @@ class WalletUnlocker extends React.Component {
     return wallets.find(wallet => wallet.id == walletId)
   }
 
-  getWalletName = () => {
-    const wallet = this.getWallet()
-    return wallet.alias || `Wallet #${this.getWallet().id}`
+  walletName = wallet => {
+    if (wallet.type === 'local') {
+      return wallet.alias || `Wallet #${wallet.id}`
+    }
+    return wallet.host.split(':')[0]
   }
 
   validatePassword = value => {
@@ -77,11 +79,10 @@ class WalletUnlocker extends React.Component {
 
   render = () => {
     const wallet = this.getWallet()
-    const walletName = this.getWalletName()
-
     if (!wallet) {
       return null
     }
+    const walletName = this.walletName(wallet)
 
     return (
       <Form

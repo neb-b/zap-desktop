@@ -105,14 +105,17 @@ class WalletLauncher extends React.Component {
     return wallets.find(wallet => wallet.id == walletId)
   }
 
-  getWalletName = () => {
-    const wallet = this.getWallet()
-    return wallet.alias || `Wallet #${this.getWallet().id}`
+  walletName = wallet => {
+    if (wallet.type === 'local') {
+      return wallet.alias || `Wallet #${wallet.id}`
+    }
+    return wallet.host.split(':')[0]
   }
 
   handleDelete = () => {
-    const { deleteWallet, walletId } = this.props
-    deleteWallet(walletId)
+    const { deleteWallet } = this.props
+    const wallet = this.getWallet()
+    deleteWallet(wallet.id)
   }
 
   onSubmit = async values => {
@@ -126,11 +129,10 @@ class WalletLauncher extends React.Component {
 
   render() {
     const wallet = this.getWallet()
-    const wallletName = this.getWalletName()
-
     if (!wallet) {
       return null
     }
+    const walletName = this.walletName(wallet)
 
     return (
       <Form
@@ -146,7 +148,7 @@ class WalletLauncher extends React.Component {
             <Flex py={3} mb={4} alignItems="center">
               <Box>
                 <Heading.h1 fontSize="xxxl">
-                  <Truncate text={wallletName} maxlen={25} />
+                  <Truncate text={walletName} maxlen={25} />
                 </Heading.h1>
               </Box>
               <Box ml={2}>

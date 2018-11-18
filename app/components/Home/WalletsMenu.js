@@ -18,6 +18,13 @@ class WalletsMenu extends React.Component {
     history.push(`/home/wallet/${info.key}`)
   }
 
+  walletName = wallet => {
+    if (wallet.type === 'local') {
+      return wallet.alias || `Wallet #${wallet.id}`
+    }
+    return wallet.host.split(':')[0]
+  }
+
   render() {
     const { wallets } = this.props
     const localWallets = wallets.filter(wallet => wallet.type === 'local')
@@ -28,7 +35,7 @@ class WalletsMenu extends React.Component {
           {localWallets.map(wallet => (
             <Text key={wallet.id} py={1}>
               <NavLink to={`/home/wallet/${wallet.id}`} activeStyle={{ fontWeight: 'normal' }}>
-                {wallet.alias || `Wallet #${wallet.id}`}
+                {this.walletName(wallet)}
               </NavLink>
             </Text>
           ))}
@@ -38,7 +45,7 @@ class WalletsMenu extends React.Component {
             {otherWallets.map(wallet => (
               <Text key={wallet.id} py={1}>
                 <NavLink to={`/home/wallet/${wallet.id}`} activeStyle={{ fontWeight: 'normal' }}>
-                  {wallet.alias || `Wallet #${wallet.id}`}
+                  {this.walletName(wallet)}
                 </NavLink>
               </Text>
             ))}
