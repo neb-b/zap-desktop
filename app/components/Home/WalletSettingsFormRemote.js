@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Form } from 'informed'
+import { Card } from 'rebass'
+import { Form } from 'components/UI'
 
 class WalletSettingsFormRemote extends React.Component {
   static propTypes = {
@@ -26,7 +27,11 @@ class WalletSettingsFormRemote extends React.Component {
         onSubmit={this.onSubmit}
         initialValues={wallet}
         {...rest}
-      />
+      >
+        <Card bg="tertiaryColor" my={3} p={3}>
+          <pre>{JSON.stringify(wallet, null, 2)}</pre>
+        </Card>
+      </Form>
     )
   }
 }

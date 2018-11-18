@@ -1,10 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withRouter } from 'react-router-dom'
-import { Box, Flex } from 'rebass'
 import { Form } from 'informed'
-import { Button, Heading, Notification, PasswordInput, Truncate } from 'components/UI'
+import { Button, PasswordInput } from 'components/UI'
 import * as yup from 'yup'
+import { WalletHeader } from '.'
 
 /**
  * @render react
@@ -94,18 +94,7 @@ class WalletUnlocker extends React.Component {
       >
         {({ formState }) => (
           <React.Fragment>
-            {formState.submits > 0 &&
-              formState.invalid && (
-                <Notification variant="error">Please correct the errors show below.</Notification>
-              )}
-
-            <Flex py={3} mb={4} alignItems="center">
-              <Box>
-                <Heading.h1 fontSize="xxxl">
-                  <Truncate text={walletName} maxlen={25} />
-                </Heading.h1>
-              </Box>
-            </Flex>
+            <WalletHeader title={walletName} />
 
             <PasswordInput
               field="password"

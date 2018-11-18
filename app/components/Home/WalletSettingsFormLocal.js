@@ -1,8 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Box, Flex } from 'rebass'
-import { Form } from 'informed'
-import { Bar, Input, Label, Range, Toggle } from 'components/UI'
+import { Bar, Form, Input, Label, Range, Toggle } from 'components/UI'
 import * as yup from 'yup'
 
 class WalletSettingsFormLocal extends React.Component {
@@ -153,7 +152,7 @@ class WalletSettingsFormLocal extends React.Component {
                       validateOnChange={formState.invalid}
                       ml="auto"
                       justifyContent="flex-end"
-                      initialValue={wallet.validateAutopilotMaxchannels}
+                      initialValue={wallet.autopilotMaxchannels}
                     />
                   </Box>
                 </Flex>

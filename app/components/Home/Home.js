@@ -30,8 +30,9 @@ class Home extends React.Component {
    */
   componentDidMount() {
     const { history, activeWallet } = this.props
-    if (activeWallet && history.location.pathname === '/home') {
-      history.push(`/home/wallet/${activeWallet}`)
+    const activeWalletPath = `/home/wallet/${activeWallet}`
+    if (activeWallet && history.location.pathname !== activeWalletPath) {
+      history.push(activeWalletPath)
     }
   }
 
@@ -70,7 +71,7 @@ class Home extends React.Component {
         <Sidebar.small p={3} pt={40}>
           <ZapLogo width="70px" height="32px" />
 
-          <WalletsMenu wallets={wallets} mt={20} activeWallet={activeWallet} />
+          <WalletsMenu wallets={wallets} mt={30} activeWallet={activeWallet} />
 
           <Box width={1} css={{ position: 'absolute', left: 0, bottom: 0 }} px={3}>
             <Bar mx={-3} />
@@ -79,7 +80,7 @@ class Home extends React.Component {
         </Sidebar.small>
 
         <MainContent>
-          <Box px={3} mt={92}>
+          <Box px={3} mt={72}>
             <Switch>
               <Route
                 exact

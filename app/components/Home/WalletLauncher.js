@@ -1,10 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withRouter } from 'react-router-dom'
-import { Box, Card, Flex } from 'rebass'
-import { Bar, Button, Heading, Truncate } from 'components/UI'
+import { Box, Flex } from 'rebass'
+import { Bar, Button, Heading } from 'components/UI'
 import ArrowRight from 'components/Icon/ArrowRight'
-import { WalletSettingsFormLocal, WalletSettingsFormRemote } from '.'
+import { WalletSettingsFormLocal, WalletSettingsFormRemote, WalletHeader } from '.'
 
 class WalletLauncher extends React.Component {
   static propTypes = {
@@ -74,12 +74,9 @@ class WalletLauncher extends React.Component {
 
     return (
       <React.Fragment>
-        <Flex py={3} mb={4} alignItems="center">
-          <Box>
-            <Heading.h1 fontSize="xxxl">
-              <Truncate text={walletName} maxlen={25} />
-            </Heading.h1>
-          </Box>
+        <Flex mb={4} alignItems="center">
+          <WalletHeader title={walletName} />
+
           <Box ml={2}>
             <Button type="submit" size="small" variant="primary" form="wallet-settings-form">
               <Flex>
@@ -94,10 +91,6 @@ class WalletLauncher extends React.Component {
             </Button>
           </Box>
         </Flex>
-
-        <Card bg="tertiaryColor" my={3} p={3}>
-          <pre>{JSON.stringify(wallet, null, 2)}</pre>
-        </Card>
 
         {wallet.type === 'local' && (
           <>
