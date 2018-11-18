@@ -79,7 +79,7 @@ class Home extends React.Component {
           </Box>
         </Sidebar.small>
 
-        <MainContent>
+        <MainContent width={1 / 2}>
           <Box px={3} mt={72}>
             <Switch>
               <Route

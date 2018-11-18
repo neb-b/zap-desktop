@@ -77,7 +77,10 @@ class WalletLauncher extends React.Component {
         <Flex mb={4} alignItems="center">
           <WalletHeader title={walletName} />
 
-          <Box ml={2}>
+          <Box ml="auto">
+            <Button type="button" size="small" onClick={this.handleDelete} mr={2}>
+              delete
+            </Button>
             <Button type="submit" size="small" variant="primary" form="wallet-settings-form">
               <Flex>
                 <Box mr={1}>Launch now</Box>
@@ -86,15 +89,12 @@ class WalletLauncher extends React.Component {
                 </Box>
               </Flex>
             </Button>
-            <Button type="button" size="small" onClick={this.handleDelete} ml={2}>
-              delete
-            </Button>
           </Box>
         </Flex>
 
         {wallet.type === 'local' && (
           <>
-            <Heading.h1 mb={4}>Settings</Heading.h1>
+            <Heading.h2 mb={4}>Settings</Heading.h2>
             <Bar my={2} />
             <WalletSettingsFormLocal
               id="wallet-settings-form"

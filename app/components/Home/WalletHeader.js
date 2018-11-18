@@ -5,7 +5,7 @@ import { Heading, Truncate } from 'components/UI'
 
 const WalletHeader = ({ title }) => (
   <Box>
-    <Heading.h1 fontSize="xxxl">
+    <Heading.h1 fontSize="xxl">
       <Truncate text={title} maxlen={25} />
     </Heading.h1>
   </Box>

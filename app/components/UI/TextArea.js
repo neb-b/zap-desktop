@@ -84,8 +84,17 @@ class TextArea extends React.PureComponent {
       borderColor = theme.colors.superGreen
     }
 
+    // Extract any styled-system space props so that we can apply them directly to the wrapper.
+    const spaceProps = {}
+    Object.keys(rest).forEach(key => {
+      if ([...Object.keys(styles.space.propTypes), 'width'].includes(key)) {
+        spaceProps[key] = rest[key]
+        delete rest[key]
+      }
+    })
+
     return (
-      <Flex flexDirection="column" justifyContent={justifyContent}>
+      <Flex flexDirection="column" justifyContent={justifyContent} {...spaceProps}>
         {label && (
           <Label htmlFor={field} mb={2}>
             {label}

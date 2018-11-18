@@ -32,7 +32,7 @@ const SystemInput = system(
   'fontFamily',
   'fontSize',
   'fontWeight',
-  'width'
+  'size'
 )
 
 /**
@@ -84,7 +84,7 @@ class Input extends React.Component {
     // Extract any styled-system space props so that we can apply them directly to the wrapper.
     const spaceProps = {}
     Object.keys(rest).forEach(key => {
-      if (Object.keys(styles.space.propTypes).includes(key)) {
+      if ([...Object.keys(styles.space.propTypes), 'width'].includes(key)) {
         spaceProps[key] = rest[key]
         delete rest[key]
       }
@@ -121,6 +121,7 @@ class Input extends React.Component {
         )}
         <SystemInput
           p={variant === 'thin' ? 2 : 3}
+          width={1}
           borderColor={borderColor || theme.colors.gray}
           css={Object.assign(
             {

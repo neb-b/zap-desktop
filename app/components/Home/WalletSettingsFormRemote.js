@@ -21,13 +21,7 @@ class WalletSettingsFormRemote extends React.Component {
   render() {
     const { wallet, startLnd, ...rest } = this.props
     return (
-      <Form
-        width={1}
-        getApi={this.setFormApi}
-        onSubmit={this.onSubmit}
-        initialValues={wallet}
-        {...rest}
-      >
+      <Form getApi={this.setFormApi} onSubmit={this.onSubmit} initialValues={wallet} {...rest}>
         <Card bg="tertiaryColor" my={3} p={3}>
           <pre>{JSON.stringify(wallet, null, 2)}</pre>
         </Card>
