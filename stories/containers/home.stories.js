@@ -11,32 +11,32 @@ import { Home } from 'components/Home'
 const delay = time => new Promise(resolve => setTimeout(() => resolve(), time))
 
 const store = new Store({
-  activeWallet: 'c0b4c9cee61aee28447438985ae6f770',
+  activeWallet: 1,
   lightningGrpcActive: false,
   walletUnlockerGrpcActive: false,
   wallets: [
     {
-      id: 'c0b4c9cee61aee28447438985ae6f770',
-      name: 'Wallet #1',
+      id: 1,
       type: 'local',
       chain: 'bitcoin',
       network: 'testnet',
-      settings: {
-        autopilot: true,
-        autopilotMaxChannels: 10,
-        autopilotAllocation: 0.6
-      }
+      alias: 'Small change',
+      autopilot: true,
+      autopilotAllocation: 0.6,
+      autopilotMaxchannels: 5,
+      autopilotMinchansize: 20000,
+      autopilotMaxchansize: 16777215,
+      autopilotPrivate: true
     },
     {
-      id: '3bb00e950e3f48833fb026b1cc994f25',
-      name: 'Home Node',
+      id: 2,
       type: 'custom',
       chain: 'bitcoin',
       network: 'testnet'
     },
     {
-      id: 'f8937948e98812b8bdd5b797494fb559',
-      name: 'My Store',
+      id: 3,
+      alias: 'The Lightning Store',
       type: 'btcpayserver',
       chain: 'bitcoin',
       network: 'testnet'

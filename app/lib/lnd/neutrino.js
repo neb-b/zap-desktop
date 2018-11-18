@@ -91,14 +91,33 @@ class Neutrino extends EventEmitter {
       port: [9735, 9734, 9733, 9732, 9731, 9736, 9737, 9738, 9739]
     })
 
+    const autopilotArgMap = {
+      autopilotAllocation: '--autopilot.allocation',
+      autopilotMaxchannels: '--autopilot.maxchannels',
+      autopilotMinchansize: '--autopilot.minchansize',
+      autopilotMaxchansize: '--autopilot.maxchansize',
+      autopilotMinconfs: '--autopilot.minconfs'
+    }
+
+    const autopilotConf = []
+    Object.keys(autopilotArgMap).forEach(key => {
+      // $FlowFixMe
+      const { value } = this.lndConfig[key]
+      if (value) {
+        autopilotConf.push(`${autopilotArgMap[key]}=${value}`)
+      }
+    })
+
     //Configure lnd.
     const neutrinoArgs = [
       `--configfile=${this.lndConfig.configPath}`,
       `--lnddir=${this.lndConfig.lndDir}`,
       `--listen=0.0.0.0:${p2pListen}`,
       `--rpclisten=localhost:${rpcListen}`,
+      `${this.lndConfig.alias ? `--alias=${this.lndConfig.alias}` : ''}`,
       `${this.lndConfig.autopilot ? '--autopilot.active' : ''}`,
-      `${this.lndConfig.alias ? `--alias=${this.lndConfig.alias}` : ''}`
+      `${this.lndConfig.autopilotPrivate ? '--autopilot.private' : ''}`,
+      ...autopilotConf
     ]
 
     // Configure neutrino backend.

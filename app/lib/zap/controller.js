@@ -70,7 +70,7 @@ class ZapController {
         { name: 'startLocalLnd', from: 'onboarding', to: 'running' },
         { name: 'startRemoteLnd', from: 'onboarding', to: 'connected' },
         { name: 'stopLnd', from: '*', to: 'onboarding' },
-        { name: 'restart', from: '*' },
+        { name: 'restart', from: '*', to: 'onboarding' },
         { name: 'terminate', from: '*', to: 'terminated' }
       ],
       methods: {
@@ -178,7 +178,11 @@ class ZapController {
     }
 
     // Give the grpc connections a chance to be properly closed out.
-    return new Promise(resolve => setTimeout(resolve, 200))
+    await new Promise(resolve => setTimeout(resolve, 200))
+
+    if (lifecycle.transition === 'restart') {
+      this.mainWindow.reload()
+    }
   }
 
   onStartOnboarding() {
@@ -248,7 +252,7 @@ class ZapController {
 
   onBeforeRestart() {
     mainLog.debug('[FSM] onBeforeRestart...')
-    this.mainWindow.reload()
+    // this.mainWindow.reload()
   }
 
   async onTerminated(lifecycle: any) {
@@ -357,7 +361,7 @@ class ZapController {
     this.neutrino.on('exit', (code, signal, lastError) => {
       mainLog.info(`Lnd process has shut down (code: ${code}, signal: ${signal})`)
       this.sendMessage('lndStopped')
-      if (this.is('running') || this.is('connected')) {
+      if (this.is('running') || (this.is('connected') && !this.is('onboarding'))) {
         dialog.showMessageBox({
           type: 'error',
           message: `Lnd has unexpectedly quit:\n\nError code: ${code}\nExit signal: ${signal}\nLast error: ${lastError}`
@@ -400,7 +404,7 @@ class ZapController {
 
     try {
       const pid = await this.neutrino.start()
-      this.sendMessage('lndStarted')
+      this.sendMessage('lndStarted', this.lndConfig)
       return pid
     } catch (e) {
       // console.error(e)
@@ -476,7 +480,13 @@ class ZapController {
    * Add IPC event listeners...
    */
   _registerIpcListeners() {
-    ipcMain.on('startLnd', (event, options: onboardingOptions) => this.startLnd(options))
+    ipcMain.on('startLnd', async (event, options: onboardingOptions) => {
+      try {
+        await this.startLnd(options)
+      } catch (e) {
+        mainLog.error('Unable to start lnd: %s', e.message)
+      }
+    })
     ipcMain.on('startLightningWallet', () =>
       this.startLightningWallet().catch(e => {
         // Notify the app of errors.

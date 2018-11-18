@@ -3,17 +3,7 @@ import PropTypes from 'prop-types'
 import { withRouter } from 'react-router-dom'
 import { Box, Flex } from 'rebass'
 import { Form } from 'informed'
-import {
-  Bar,
-  Button,
-  Heading,
-  Input,
-  Label,
-  Notification,
-  Range,
-  Toggle,
-  Truncate
-} from 'components/UI'
+import { Bar, Button, Heading, Input, Label, Range, Toggle, Truncate } from 'components/UI'
 import ArrowRight from 'components/Icon/ArrowRight'
 import * as yup from 'yup'
 
@@ -65,21 +55,6 @@ class WalletLauncher extends React.Component {
     }
   }
 
-  validateAutopilotMaxChannels = value => {
-    try {
-      yup
-        .number()
-        .required()
-        .positive()
-        .integer()
-        .max(100)
-        .typeError('A number is required')
-        .validateSync(value)
-    } catch (error) {
-      return error.message
-    }
-  }
-
   validateAutopilotAllocation = value => {
     try {
       yup
@@ -95,13 +70,44 @@ class WalletLauncher extends React.Component {
     }
   }
 
+  validateAutopilotMaxchannels = value => {
+    try {
+      yup
+        .number()
+        .required()
+        .positive()
+        .integer()
+        .max(100)
+        .typeError('A number is required')
+        .validateSync(value)
+    } catch (error) {
+      return error.message
+    }
+  }
+
+  validateAutopilotChansize = value => {
+    try {
+      yup
+        .number()
+        .required()
+        .positive()
+        .integer()
+        .max(100000000)
+        .typeError('A number is required')
+        .validateSync(value)
+    } catch (error) {
+      return error.message
+    }
+  }
+
   getWallet = () => {
     const { wallets, walletId } = this.props
     return wallets.find(wallet => wallet.id == walletId)
   }
 
   getWalletName = () => {
-    return `Wallet #${this.getWallet().id}`
+    const wallet = this.getWallet()
+    return wallet.alias || `Wallet #${this.getWallet().id}`
   }
 
   handleDelete = () => {
@@ -137,15 +143,10 @@ class WalletLauncher extends React.Component {
       >
         {({ formState }) => (
           <React.Fragment>
-            {formState.submits > 0 &&
-              formState.invalid && (
-                <Notification variant="error">Please correct the errors show below.</Notification>
-              )}
-
             <Flex py={3} mb={4} alignItems="center">
               <Box>
                 <Heading.h1 fontSize="xxxl">
-                  <Truncate text={wallletName} />
+                  <Truncate text={wallletName} maxlen={25} />
                 </Heading.h1>
               </Box>
               <Box ml={2}>
@@ -165,6 +166,19 @@ class WalletLauncher extends React.Component {
 
             <Heading.h1 mb={4}>Settings</Heading.h1>
 
+            <Bar my={2} />
+
+            <Flex py={3} alignItems="center">
+              <Box width={1 / 2}>
+                <Label htmlFor="alias">Alias</Label>
+              </Box>
+              <Box ml="auto">
+                <Input field="alias" id="alias" ml="auto" justifyContent="flex-end" />
+              </Box>
+            </Flex>
+
+            <Bar my={2} />
+
             <Flex alignItems="center">
               <Box width={1 / 2}>
                 <Label htmlFor="autopilot">Autopilot</Label>
@@ -181,32 +195,8 @@ class WalletLauncher extends React.Component {
               </Box>
             </Flex>
 
-            <Bar my={2} />
-
             {formState.values.autopilot ? (
               <React.Fragment>
-                <Flex py={3} alignItems="center">
-                  <Box width={1 / 2}>
-                    <Label htmlFor="autopilotMaxChannels">Number of Channels max.</Label>
-                  </Box>
-                  <Box ml="auto">
-                    <Input
-                      field="autopilotMaxChannels"
-                      id="autopilotMaxChannels"
-                      type="number"
-                      min="0"
-                      max="100"
-                      step="1"
-                      variant="thin"
-                      validate={this.validateAutopilotMaxChannels}
-                      validateOnBlur
-                      validateOnChange={formState.invalid}
-                      ml="auto"
-                      justifyContent="flex-end"
-                    />
-                  </Box>
-                </Flex>
-
                 <Flex py={3} alignItems="center">
                   <Box width={1 / 2}>
                     <Label htmlFor="autopilotAllocation">Percentage of Balance</Label>
@@ -223,6 +213,69 @@ class WalletLauncher extends React.Component {
                       min="0"
                       max="1"
                       step="0.01"
+                    />
+                  </Box>
+                </Flex>
+
+                <Flex py={3} alignItems="center">
+                  <Box width={1 / 2}>
+                    <Label htmlFor="autopilotMaxchannels">Number of Channels max.</Label>
+                  </Box>
+                  <Box ml="auto">
+                    <Input
+                      field="autopilotMaxchannels"
+                      id="autopilotMaxchannels"
+                      type="number"
+                      min="0"
+                      max="1000"
+                      step="1"
+                      validate={this.validateAutopilotMaxchannels}
+                      validateOnBlur
+                      validateOnChange={formState.invalid}
+                      ml="auto"
+                      justifyContent="flex-end"
+                    />
+                  </Box>
+                </Flex>
+
+                <Flex py={3} alignItems="center">
+                  <Box width={1 / 2}>
+                    <Label htmlFor="autopilotMinchansize">Minimum channel size</Label>
+                  </Box>
+                  <Box ml="auto">
+                    <Input
+                      field="autopilotMinchansize"
+                      id="autopilotMinchansize"
+                      type="number"
+                      min="0"
+                      max="100000000"
+                      step="1"
+                      validate={this.validateAutopilotChansize}
+                      validateOnBlur
+                      validateOnChange={formState.invalid}
+                      ml="auto"
+                      justifyContent="flex-end"
+                    />
+                  </Box>
+                </Flex>
+
+                <Flex py={3} alignItems="center">
+                  <Box width={1 / 2}>
+                    <Label htmlFor="autopilotMaxchansize">Maximum channel size</Label>
+                  </Box>
+                  <Box ml="auto">
+                    <Input
+                      field="autopilotMaxchansize"
+                      id="autopilotMaxchansize"
+                      type="number"
+                      min="0"
+                      max="100000000"
+                      step="1"
+                      validate={this.validateAutopilotChansize}
+                      validateOnBlur
+                      validateOnChange={formState.invalid}
+                      ml="auto"
+                      justifyContent="flex-end"
                     />
                   </Box>
                 </Flex>

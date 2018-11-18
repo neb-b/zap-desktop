@@ -9,7 +9,7 @@ import { clearError, errorSelectors } from 'reducers/error'
 import { loadingSelectors, setLoading, setMounted } from 'reducers/loading'
 import { initCurrency, initLocale } from 'reducers/locale'
 import { initTheme, themeSelectors } from 'reducers/theme'
-import { initWallets } from 'reducers/wallet'
+import { initWallets, walletSelectors } from 'reducers/wallet'
 import { fetchTicker, tickerSelectors } from 'reducers/ticker'
 
 import { Page, Titlebar, GlobalStyle, Modal } from 'components/UI'
@@ -33,6 +33,7 @@ const SPLASH_SCREEN_TIME = 1500
  */
 class Root extends React.Component {
   static propTypes = {
+    hasWallets: PropTypes.bool,
     clearError: PropTypes.func.isRequired,
     currentTicker: PropTypes.object,
     theme: PropTypes.object,
@@ -103,7 +104,7 @@ class Root extends React.Component {
   }
 
   render() {
-    const { clearError, theme, error, history, isLoading } = this.props
+    const { hasWallets, clearError, theme, error, history, isLoading } = this.props
 
     // Wait until we have loaded essential data before displaying anything.
     if (!theme) {
@@ -125,7 +126,7 @@ class Root extends React.Component {
                   exact
                   path="/onboarding"
                   render={() => (
-                    <Modal onClose={() => history.push('/home')}>
+                    <Modal withClose={hasWallets} onClose={() => history.push('/home')}>
                       <Onboarding />
                     </Modal>
                   )}
@@ -151,6 +152,7 @@ class Root extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  hasWallets: walletSelectors.hasWallets(state),
   currentTicker: tickerSelectors.currentTicker(state),
   theme: themeSelectors.currentThemeSettings(state),
   error: errorSelectors.getErrorState(state),

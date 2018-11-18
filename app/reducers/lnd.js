@@ -4,7 +4,7 @@ import { showNotification } from 'lib/utils/notifications'
 import db from 'store/db'
 import { fetchBalance } from './balance'
 import { fetchInfo, setHasSynced, infoSelectors } from './info'
-import { setActiveWallet } from './wallet'
+import { putWallet, setActiveWallet } from './wallet'
 import { onboardingFinished, setSeed } from './onboarding'
 
 // ------------------------------------
@@ -158,7 +158,11 @@ export const lndStopped = () => async dispatch => {
   dispatch({ type: LND_STOPPED })
 }
 
-export const lndStarted = () => async dispatch => {
+export const lndStarted = (event, lndConfig) => async dispatch => {
+  if (lndConfig.id !== 'tmp') {
+    dispatch(putWallet(lndConfig))
+    dispatch(setActiveWallet(lndConfig.id))
+  }
   dispatch({ type: LND_STARTED })
 }
 
@@ -263,7 +267,7 @@ export const createNewWallet = () => async (dispatch, getState) => {
   const onboardingState = getState().onboarding
 
   // Define the wallet config.
-  const wallet = {
+  let wallet = {
     type: 'local',
     chain: 'bitcoin',
     network: 'testnet',
@@ -274,29 +278,38 @@ export const createNewWallet = () => async (dispatch, getState) => {
   }
 
   // Save the wallet config.
-  await db.wallets.put(wallet)
+  wallet = await dispatch(putWallet(wallet))
 
   // Start Lnd and trigger the wallet to be initialised as soon as the wallet unlocker is available.
   dispatch({ type: CREATING_NEW_WALLET })
-  ipcRenderer.send('startLnd', wallet)
+  await dispatch(startLnd(wallet))
 }
 
-export const recoverOldWallet = () => dispatch => {
-  dispatch({ type: RECOVERING_OLD_WALLET })
-  const wallet = {
+export const recoverOldWallet = () => async dispatch => {
+  // Define the wallet config.
+  let wallet = {
     type: 'local',
     chain: 'bitcoin',
     network: 'testnet'
   }
-  ipcRenderer.send('startLnd', wallet)
+
+  // Save the wallet config.
+  wallet = await dispatch(putWallet(wallet))
+
+  // Start Lnd and trigger the wallet to be recovered as soon as the wallet unlocker is available.
+  dispatch({ type: RECOVERING_OLD_WALLET })
+  await dispatch(startLnd(wallet))
 }
 
-export const startActiveWallet = () => async dispatch => {
-  const activeWallet = await db.settings.get({ key: 'activeWallet' })
-  if (activeWallet) {
-    const wallet = await db.wallets.get({ id: activeWallet.value })
-    if (wallet) {
-      dispatch(startLnd(wallet))
+export const startActiveWallet = () => async (dispatch, getState) => {
+  const state = getState().lnd
+  if (!state.lndStarted && !state.startingLnd) {
+    const activeWallet = await db.settings.get({ key: 'activeWallet' })
+    if (activeWallet) {
+      const wallet = await db.wallets.get({ id: activeWallet.value })
+      if (wallet) {
+        dispatch(startLnd(wallet))
+      }
     }
   }
 }
@@ -305,13 +318,7 @@ export const startActiveWallet = () => async dispatch => {
  * As soon as we have an active connection to an unlocked wallet, fetch the wallet info so that we have the key data as
  * early as possible.
  */
-export const lndWalletStarted = lndConfig => async dispatch => {
-  // Save the wallet settings.
-  const walletId = await db.wallets.put(lndConfig)
-
-  // Save the active wallet config.
-  dispatch(setActiveWallet(walletId))
-
+export const lndWalletStarted = () => async dispatch => {
   // Fetch info from lnd.
   dispatch(fetchInfo())
 

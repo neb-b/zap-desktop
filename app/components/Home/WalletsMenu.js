@@ -28,17 +28,17 @@ class WalletsMenu extends React.Component {
           {localWallets.map(wallet => (
             <Text key={wallet.id} py={1}>
               <NavLink to={`/home/wallet/${wallet.id}`} activeStyle={{ fontWeight: 'normal' }}>
-                Wallet #{wallet.id}
+                {wallet.alias || `Wallet #${wallet.id}`}
               </NavLink>
             </Text>
           ))}
         </MenuItemGroup>
-        {otherWallets && (
+        {otherWallets.length > 0 && (
           <MenuItemGroup title="More">
             {otherWallets.map(wallet => (
               <Text key={wallet.id} py={1}>
                 <NavLink to={`/home/wallet/${wallet.id}`} activeStyle={{ fontWeight: 'normal' }}>
-                  Wallet #{wallet.id}
+                  {wallet.alias || `Wallet #${wallet.id}`}
                 </NavLink>
               </Text>
             ))}

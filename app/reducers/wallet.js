@@ -7,6 +7,8 @@ import db from 'store/db'
 export const SET_WALLETS = 'SET_WALLETS'
 export const SET_ACTIVE_WALLET = 'SET_ACTIVE_WALLET'
 export const SET_IS_WALLET_OPEN = 'SET_IS_WALLET_OPEN'
+export const DELETE_WALLET = 'DELETE_WALLET'
+export const PUT_WALLET = 'PUT_WALLET'
 
 // ------------------------------------
 // Actions
@@ -41,31 +43,46 @@ export function setActiveWallet(activeWallet) {
   }
 }
 
-export const deleteWallet = walletId => (dispatch, getState) => {
-  let { wallets } = getState().wallet
-  db.wallets.delete(walletId)
-  wallets = wallets.filter(wallet => wallet.id !== walletId)
+export const getWallets = () => async dispatch => {
+  let wallets
+  try {
+    wallets = await db.wallets.toArray()
+  } catch (e) {
+    wallets = []
+  }
   dispatch(setWallets(wallets))
+  return wallets
+}
+
+export const putWallet = wallet => async dispatch => {
+  dispatch({ type: PUT_WALLET, wallet })
+  wallet.id = await db.wallets.put(wallet)
+  await dispatch(getWallets())
+  return wallet
+}
+
+export const deleteWallet = walletId => async dispatch => {
+  dispatch({ type: DELETE_WALLET, walletId })
+  await db.wallets.delete(walletId)
+  const wallets = await dispatch(getWallets())
   dispatch(setActiveWallet(wallets[0].id))
   setIsWalletOpen(false)
 }
 
 export const initWallets = () => async dispatch => {
-  let wallets
   let activeWallet
-  let isWalletOpen = false
+  let isWalletOpen
   try {
-    wallets = await db.wallets.toArray()
-
+    await dispatch(getWallets())
     activeWallet = await db.settings.get({ key: 'activeWallet' })
-    activeWallet = activeWallet.value
+    activeWallet = activeWallet.value || null
 
     isWalletOpen = await db.settings.get({ key: 'isWalletOpen' })
     isWalletOpen = isWalletOpen.value
   } catch (e) {
-    wallets = []
+    activeWallet = null
+    isWalletOpen = false
   }
-  dispatch(setWallets(wallets))
   dispatch(setIsWalletOpen(isWalletOpen))
   dispatch(setActiveWallet(activeWallet))
 }
@@ -94,6 +111,7 @@ walletSelectors.activeWalletSettings = createSelector(
   activeWalletSelector,
   (wallets, activeWallet) => wallets.find(wallet => wallet.id === activeWallet)
 )
+walletSelectors.hasWallets = createSelector(walletSelectors.wallets, wallets => wallets.length > 0)
 
 export { walletSelectors }
 

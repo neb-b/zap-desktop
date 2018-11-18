@@ -78,37 +78,39 @@ class Home extends React.Component {
           </Box>
         </Sidebar.small>
 
-        <MainContent px={3} mt={92} width={9 / 16}>
-          <Switch>
-            <Route
-              exact
-              path="/home/wallet/:walletId"
-              render={({ match: { params } }) => (
-                <WalletLauncher
-                  wallets={wallets}
-                  walletId={params.walletId}
-                  startLnd={startLnd}
-                  stopLnd={stopLnd}
-                  lightningGrpcActive={lightningGrpcActive}
-                  walletUnlockerGrpcActive={walletUnlockerGrpcActive}
-                  deleteWallet={deleteWallet}
-                />
-              )}
-            />
-            <Route
-              exact
-              path="/home/wallet/:walletId/unlock"
-              render={({ match: { params } }) => (
-                <WalletUnlocker
-                  wallets={wallets}
-                  walletId={params.walletId}
-                  unlockWallet={unlockWallet}
-                  lightningGrpcActive={lightningGrpcActive}
-                />
-              )}
-            />
-            <Route component={NoMatch} />
-          </Switch>
+        <MainContent>
+          <Box px={3} mt={92}>
+            <Switch>
+              <Route
+                exact
+                path="/home/wallet/:walletId"
+                render={({ match: { params } }) => (
+                  <WalletLauncher
+                    wallets={wallets}
+                    walletId={params.walletId}
+                    startLnd={startLnd}
+                    stopLnd={stopLnd}
+                    lightningGrpcActive={lightningGrpcActive}
+                    walletUnlockerGrpcActive={walletUnlockerGrpcActive}
+                    deleteWallet={deleteWallet}
+                  />
+                )}
+              />
+              <Route
+                exact
+                path="/home/wallet/:walletId/unlock"
+                render={({ match: { params } }) => (
+                  <WalletUnlocker
+                    wallets={wallets}
+                    walletId={params.walletId}
+                    unlockWallet={unlockWallet}
+                    lightningGrpcActive={lightningGrpcActive}
+                  />
+                )}
+              />
+              <Route component={NoMatch} />
+            </Switch>
+          </Box>
         </MainContent>
       </>
     )

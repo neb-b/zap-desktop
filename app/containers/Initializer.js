@@ -10,6 +10,7 @@ import { startActiveWallet } from 'reducers/lnd'
  */
 class Initializer extends React.Component {
   static propTypes = {
+    onboarding: PropTypes.bool,
     history: PropTypes.object.isRequired,
     activeWallet: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     activeWalletSettings: PropTypes.object,
@@ -19,18 +20,12 @@ class Initializer extends React.Component {
     startActiveWallet: PropTypes.func.isRequired
   }
 
-  componentDidMount() {
-    const { activeWallet, isWalletOpen } = this.props
-    if (activeWallet && isWalletOpen) {
-      startActiveWallet()
-    }
-  }
-
   /**
    * Redirect to the correct page when we establish a connection to lnd.
    */
   componentDidUpdate(prevProps) {
     const {
+      onboarding,
       history,
       activeWallet,
       activeWalletSettings,
@@ -40,12 +35,21 @@ class Initializer extends React.Component {
       startActiveWallet
     } = this.props
 
+    // Wait unti we are onboarding before doing anything.
+    if (!onboarding) {
+      return
+    }
+
     // If we have just determined that the user has an active wallet, attempt to start it.
-    if (typeof activeWallet !== 'undefined' && typeof prevProps.activeWallet === 'undefined') {
-      if (activeWallet && isWalletOpen) {
-        startActiveWallet()
+    if (typeof activeWallet !== 'undefined') {
+      if (activeWalletSettings) {
+        if (isWalletOpen) {
+          startActiveWallet()
+        } else {
+          history.push('/home')
+        }
       } else {
-        history.push('/home')
+        history.push('/onboarding')
       }
     }
 
@@ -70,6 +74,7 @@ class Initializer extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  onboarding: state.onboarding.onboarding,
   activeWallet: walletSelectors.activeWallet(state),
   activeWalletSettings: walletSelectors.activeWalletSettings(state),
   lightningGrpcActive: state.lnd.lightningGrpcActive,
