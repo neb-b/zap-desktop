@@ -82,7 +82,13 @@ class WalletSettingsFormLocal extends React.Component {
   render() {
     const { wallet, startLnd, ...rest } = this.props
     return (
-      <Form getApi={this.setFormApi} preSubmit={this.preSubmit} onSubmit={this.onSubmit} {...rest}>
+      <Form
+        getApi={this.setFormApi}
+        preSubmit={this.preSubmit}
+        onSubmit={this.onSubmit}
+        {...rest}
+        initialValues={wallet}
+      >
         {({ formState }) => (
           <React.Fragment>
             <DataRow

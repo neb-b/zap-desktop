@@ -1,12 +1,3 @@
-@import 'styles/variables.scss';
-
-.container {
-  position: relative;
-  width: 100%;
-  height: 100vh;
-  background: var(--primaryColor);
-}
-
 .content {
   color: var(--primaryText);
   text-align: center;

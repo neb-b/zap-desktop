@@ -4,7 +4,7 @@ import { infoSelectors } from 'reducers/info'
 import { lndSelectors } from 'reducers/lnd'
 import { setIsWalletOpen } from 'reducers/wallet'
 
-import Syncing from 'components/Syncing'
+import { Syncing } from 'components/Syncing'
 import withLoading from 'components/withLoading'
 
 const mapStateToProps = state => ({

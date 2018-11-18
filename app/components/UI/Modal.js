@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Box, Flex } from 'rebass'
 import X from 'components/Icon/X'
 import ZapLogo from 'components/Icon/ZapLogo'
-import { Text } from 'components/UI'
+import { Panel, Text } from 'components/UI'
 
 /**
  * @render react
@@ -27,19 +27,20 @@ class Modal extends React.Component {
   }
 
   render() {
-    const { children, onClose, withClose, withHeader } = this.props
+    const { children, onClose, withClose, withHeader, ...rest } = this.props
     return (
-      <Flex flexDirection="column" width={1} p={3} bg="primaryColor" css={{ height: '100%' }}>
-        <Flex flexDirection="column" justifyContent="flex-end" as="header" color="primaryText">
-          <Box
-            css={{ height: '40px', cursor: 'pointer', opacity: 0.6, '&:hover': { opacity: 1 } }}
-            ml="auto"
-            onClick={onClose}
-            p={2}
-          >
-            {withClose && <X width={20} height={20} />}
-          </Box>
-
+      <Panel width={1} bg="primaryColor" color="primaryText">
+        <Panel.Header p={3}>
+          <Flex justifyContent="space-between">
+            <Box
+              css={{ height: '40px', cursor: 'pointer', opacity: 0.6, '&:hover': { opacity: 1 } }}
+              ml="auto"
+              onClick={onClose}
+              p={2}
+            >
+              {withClose && <X width={20} height={20} />}
+            </Box>
+          </Flex>
           {withHeader && (
             <Flex justifyContent="space-between" px={3}>
               <Box color="primaryText">
@@ -53,11 +54,12 @@ class Modal extends React.Component {
               </Text>
             </Flex>
           )}
-        </Flex>
-        <Box as="section" p={3} pt={1} css={{ flex: 1 }}>
+        </Panel.Header>
+        <Panel.Body px={3} pb={4} {...rest}>
+          {' '}
           {children}
-        </Box>
-      </Flex>
+        </Panel.Body>
+      </Panel>
     )
   }
 }
