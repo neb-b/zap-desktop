@@ -28,7 +28,7 @@ class WalletsMenu extends React.Component {
           {localWallets.map(wallet => (
             <Text key={wallet.id} py={1}>
               <NavLink to={`/home/wallet/${wallet.id}`} activeStyle={{ fontWeight: 'normal' }}>
-                {wallet.name || wallet.id}
+                Wallet #{wallet.id}
               </NavLink>
             </Text>
           ))}
@@ -38,7 +38,7 @@ class WalletsMenu extends React.Component {
             {otherWallets.map(wallet => (
               <Text key={wallet.id} py={1}>
                 <NavLink to={`/home/wallet/${wallet.id}`} activeStyle={{ fontWeight: 'normal' }}>
-                  {wallet.name || wallet.id}
+                  Wallet #{wallet.id}
                 </NavLink>
               </Text>
             ))}

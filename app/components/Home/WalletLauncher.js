@@ -108,6 +108,10 @@ class WalletLauncher extends React.Component {
     return wallets.find(wallet => wallet.id == walletId)
   }
 
+  getWalletName = () => {
+    return `Wallet #${this.getWallet().id}`
+  }
+
   handleDelete = () => {
     const { deleteWallet, walletId } = this.props
     deleteWallet(walletId)
@@ -115,6 +119,8 @@ class WalletLauncher extends React.Component {
 
   render() {
     const wallet = this.getWallet()
+    const wallletName = this.getWalletName()
+
     if (!wallet) {
       return null
     }
@@ -138,7 +144,7 @@ class WalletLauncher extends React.Component {
             <Flex py={3} mb={4} alignItems="center">
               <Box>
                 <Heading.h1 fontSize="xxxl">
-                  <Truncate text={wallet.name || wallet.id} />
+                  <Truncate text={wallletName} />
                 </Heading.h1>
               </Box>
               <Box ml={2}>

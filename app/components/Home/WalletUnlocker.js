@@ -58,6 +58,10 @@ class WalletUnlocker extends React.Component {
     return wallets.find(wallet => wallet.id == walletId)
   }
 
+  getWalletName = () => {
+    return `Wallet #${this.getWallet().id}`
+  }
+
   validatePassword = value => {
     try {
       yup
@@ -72,6 +76,7 @@ class WalletUnlocker extends React.Component {
 
   render = () => {
     const wallet = this.getWallet()
+    const walletName = this.getWalletName()
 
     if (!wallet) {
       return null
@@ -95,7 +100,7 @@ class WalletUnlocker extends React.Component {
             <Flex py={3} mb={4} alignItems="center">
               <Box>
                 <Heading.h1 fontSize="xxxl">
-                  <Truncate text={wallet.name || wallet.id} />
+                  <Truncate text={walletName} />
                 </Heading.h1>
               </Box>
             </Flex>
