@@ -14,6 +14,7 @@ import {
   Toggle,
   Truncate
 } from 'components/UI'
+import ArrowRight from 'components/Icon/ArrowRight'
 import * as yup from 'yup'
 
 class WalletLauncher extends React.Component {
@@ -54,15 +55,6 @@ class WalletLauncher extends React.Component {
         history.push('/app')
       }
     }
-  }
-
-  setFormApi = formApi => {
-    this.formApi = formApi
-  }
-
-  onSubmit = async values => {
-    const { startLnd } = this.props
-    return startLnd(values)
   }
 
   validateAutopilot = value => {
@@ -117,6 +109,15 @@ class WalletLauncher extends React.Component {
     deleteWallet(walletId)
   }
 
+  onSubmit = async values => {
+    const { startLnd } = this.props
+    return startLnd(values)
+  }
+
+  setFormApi = formApi => {
+    this.formApi = formApi
+  }
+
   render() {
     const wallet = this.getWallet()
     const wallletName = this.getWalletName()
@@ -148,10 +149,15 @@ class WalletLauncher extends React.Component {
                 </Heading.h1>
               </Box>
               <Box ml={2}>
-                <Button type="submit" size="small">
-                  Launch now
+                <Button type="submit" size="small" variant="primary">
+                  <Flex>
+                    <Box mr={1}>Launch now</Box>
+                    <Box>
+                      <ArrowRight />
+                    </Box>
+                  </Flex>
                 </Button>
-                <Button type="button" size="small" onClick={this.handleDelete}>
+                <Button type="button" size="small" onClick={this.handleDelete} ml={2}>
                   delete
                 </Button>
               </Box>
@@ -166,7 +172,7 @@ class WalletLauncher extends React.Component {
 
               <Box ml="auto">
                 <Toggle
-                  field="settings.autopilot"
+                  field="autopilot"
                   id="autopilot"
                   validate={this.validateAutopilot}
                   validateOnBlur
@@ -177,7 +183,7 @@ class WalletLauncher extends React.Component {
 
             <Bar my={2} />
 
-            {formState.values.settings && formState.values.settings.autopilot ? (
+            {formState.values.autopilot ? (
               <React.Fragment>
                 <Flex py={3} alignItems="center">
                   <Box width={1 / 2}>
@@ -185,7 +191,7 @@ class WalletLauncher extends React.Component {
                   </Box>
                   <Box ml="auto">
                     <Input
-                      field="settings.autopilotMaxChannels"
+                      field="autopilotMaxChannels"
                       id="autopilotMaxChannels"
                       type="number"
                       min="0"
@@ -207,7 +213,7 @@ class WalletLauncher extends React.Component {
                   </Box>
                   <Box ml="auto">
                     <Range
-                      field="settings.autopilotAllocation"
+                      field="autopilotAllocation"
                       id="autopilotAllocation"
                       validate={this.validateAutopilotAllocation}
                       validateOnBlur
