@@ -1,5 +1,4 @@
 import { ipcRenderer } from 'electron'
-import crypto from 'crypto'
 import { createSelector } from 'reselect'
 import { showNotification } from 'lib/utils/notifications'
 import db from 'store/db'
@@ -260,43 +259,36 @@ export const fetchSeedError = (event, error) => dispatch => {
   dispatch({ type: FETCH_SEED_ERROR, error })
 }
 
-export const createNewWallet = () => (dispatch, getState) => {
-  crypto.randomBytes(16, async (err, buffer) => {
-    const onboardingState = getState().onboarding
+export const createNewWallet = () => async (dispatch, getState) => {
+  const onboardingState = getState().onboarding
 
-    // Define the wallet config.
-    const wallet = {
-      id: buffer.toString('hex'),
-      type: 'local',
-      chain: 'bitcoin',
-      network: 'testnet',
-      settings: {
-        autopilot: onboardingState.autopilot,
-        alias: onboardingState.alias
-      }
+  // Define the wallet config.
+  const wallet = {
+    type: 'local',
+    chain: 'bitcoin',
+    network: 'testnet',
+    settings: {
+      autopilot: onboardingState.autopilot,
+      alias: onboardingState.alias
     }
+  }
 
-    // Save the wallet config.
-    await db.wallets.put(wallet)
+  // Save the wallet config.
+  await db.wallets.put(wallet)
 
-    // Start Lnd and trigger the wallet to be initialised as soon as the wallet unlocker is available.
-    dispatch({ type: CREATING_NEW_WALLET })
-    ipcRenderer.send('startLnd', wallet)
-  })
+  // Start Lnd and trigger the wallet to be initialised as soon as the wallet unlocker is available.
+  dispatch({ type: CREATING_NEW_WALLET })
+  ipcRenderer.send('startLnd', wallet)
 }
 
 export const recoverOldWallet = () => dispatch => {
-  crypto.randomBytes(16, function(err, buffer) {
-    const id = buffer.toString('hex')
-
-    dispatch({ type: RECOVERING_OLD_WALLET })
-    ipcRenderer.send('startLnd', {
-      id,
-      type: 'local',
-      chain: 'bitcoin',
-      network: 'testnet'
-    })
-  })
+  dispatch({ type: RECOVERING_OLD_WALLET })
+  const wallet = {
+    type: 'local',
+    chain: 'bitcoin',
+    network: 'testnet'
+  }
+  ipcRenderer.send('startLnd', wallet)
 }
 
 export const startActiveWallet = () => async dispatch => {

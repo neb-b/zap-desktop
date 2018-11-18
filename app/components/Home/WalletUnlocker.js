@@ -55,7 +55,7 @@ class WalletUnlocker extends React.Component {
 
   getWallet = () => {
     const { wallets, walletId } = this.props
-    return wallets.find(wallet => wallet.id === walletId)
+    return wallets.find(wallet => wallet.id == walletId)
   }
 
   validatePassword = value => {
