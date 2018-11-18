@@ -1,11 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { withRouter } from 'react-router-dom'
-import { Box, Flex } from 'rebass'
-import { Form } from 'informed'
-import { Bar, Button, Heading, Input, Label, Range, Toggle, Truncate } from 'components/UI'
+import { Box, Card, Flex } from 'rebass'
+import { Bar, Button, Heading, Truncate } from 'components/UI'
 import ArrowRight from 'components/Icon/ArrowRight'
-import * as yup from 'yup'
+import { WalletSettingsFormLocal, WalletSettingsFormRemote } from '.'
 
 class WalletLauncher extends React.Component {
   static propTypes = {
@@ -47,59 +46,6 @@ class WalletLauncher extends React.Component {
     }
   }
 
-  validateAutopilot = value => {
-    try {
-      yup.boolean().validateSync(value)
-    } catch (error) {
-      return error.message
-    }
-  }
-
-  validateAutopilotAllocation = value => {
-    try {
-      yup
-        .number()
-        .required()
-        .positive()
-        .min(0)
-        .max(1)
-        .typeError('A number is required')
-        .validateSync(value)
-    } catch (error) {
-      return error.message
-    }
-  }
-
-  validateAutopilotMaxchannels = value => {
-    try {
-      yup
-        .number()
-        .required()
-        .positive()
-        .integer()
-        .max(100)
-        .typeError('A number is required')
-        .validateSync(value)
-    } catch (error) {
-      return error.message
-    }
-  }
-
-  validateAutopilotChansize = value => {
-    try {
-      yup
-        .number()
-        .required()
-        .positive()
-        .integer()
-        .max(100000000)
-        .typeError('A number is required')
-        .validateSync(value)
-    } catch (error) {
-      return error.message
-    }
-  }
-
   getWallet = () => {
     const { wallets, walletId } = this.props
     return wallets.find(wallet => wallet.id == walletId)
@@ -118,16 +64,8 @@ class WalletLauncher extends React.Component {
     deleteWallet(wallet.id)
   }
 
-  onSubmit = async values => {
-    const { startLnd } = this.props
-    return startLnd(values)
-  }
-
-  setFormApi = formApi => {
-    this.formApi = formApi
-  }
-
   render() {
+    const { startLnd } = this.props
     const wallet = this.getWallet()
     if (!wallet) {
       return null
@@ -135,157 +73,54 @@ class WalletLauncher extends React.Component {
     const walletName = this.walletName(wallet)
 
     return (
-      <Form
-        width={1}
-        getApi={this.setFormApi}
-        onSubmit={this.onSubmit}
-        onSubmitFailure={this.onSubmitFailure}
-        initialValues={wallet}
-        key={`wallet-settings-form-${wallet.id}`}
-      >
-        {({ formState }) => (
-          <React.Fragment>
-            <Flex py={3} mb={4} alignItems="center">
-              <Box>
-                <Heading.h1 fontSize="xxxl">
-                  <Truncate text={walletName} maxlen={25} />
-                </Heading.h1>
-              </Box>
-              <Box ml={2}>
-                <Button type="submit" size="small" variant="primary">
-                  <Flex>
-                    <Box mr={1}>Launch now</Box>
-                    <Box>
-                      <ArrowRight />
-                    </Box>
-                  </Flex>
-                </Button>
-                <Button type="button" size="small" onClick={this.handleDelete} ml={2}>
-                  delete
-                </Button>
-              </Box>
-            </Flex>
+      <React.Fragment>
+        <Flex py={3} mb={4} alignItems="center">
+          <Box>
+            <Heading.h1 fontSize="xxxl">
+              <Truncate text={walletName} maxlen={25} />
+            </Heading.h1>
+          </Box>
+          <Box ml={2}>
+            <Button type="submit" size="small" variant="primary" form="wallet-settings-form">
+              <Flex>
+                <Box mr={1}>Launch now</Box>
+                <Box>
+                  <ArrowRight />
+                </Box>
+              </Flex>
+            </Button>
+            <Button type="button" size="small" onClick={this.handleDelete} ml={2}>
+              delete
+            </Button>
+          </Box>
+        </Flex>
 
+        <Card bg="tertiaryColor" my={3} p={3}>
+          <pre>{JSON.stringify(wallet, null, 2)}</pre>
+        </Card>
+
+        {wallet.type === 'local' && (
+          <>
             <Heading.h1 mb={4}>Settings</Heading.h1>
-
             <Bar my={2} />
-
-            <Flex py={3} alignItems="center">
-              <Box width={1 / 2}>
-                <Label htmlFor="alias">Alias</Label>
-              </Box>
-              <Box ml="auto">
-                <Input field="alias" id="alias" ml="auto" justifyContent="flex-end" />
-              </Box>
-            </Flex>
-
-            <Bar my={2} />
-
-            <Flex alignItems="center">
-              <Box width={1 / 2}>
-                <Label htmlFor="autopilot">Autopilot</Label>
-              </Box>
-
-              <Box ml="auto">
-                <Toggle
-                  field="autopilot"
-                  id="autopilot"
-                  validate={this.validateAutopilot}
-                  validateOnBlur
-                  validateOnChange={formState.invalid}
-                />
-              </Box>
-            </Flex>
-
-            {formState.values.autopilot ? (
-              <React.Fragment>
-                <Flex py={3} alignItems="center">
-                  <Box width={1 / 2}>
-                    <Label htmlFor="autopilotAllocation">Percentage of Balance</Label>
-                  </Box>
-                  <Box ml="auto">
-                    <Range
-                      field="autopilotAllocation"
-                      id="autopilotAllocation"
-                      validate={this.validateAutopilotAllocation}
-                      validateOnBlur
-                      validateOnChange={formState.invalid}
-                      ml="auto"
-                      justifyContent="flex-end"
-                      min="0"
-                      max="1"
-                      step="0.01"
-                    />
-                  </Box>
-                </Flex>
-
-                <Flex py={3} alignItems="center">
-                  <Box width={1 / 2}>
-                    <Label htmlFor="autopilotMaxchannels">Number of Channels max.</Label>
-                  </Box>
-                  <Box ml="auto">
-                    <Input
-                      field="autopilotMaxchannels"
-                      id="autopilotMaxchannels"
-                      type="number"
-                      min="0"
-                      max="1000"
-                      step="1"
-                      validate={this.validateAutopilotMaxchannels}
-                      validateOnBlur
-                      validateOnChange={formState.invalid}
-                      ml="auto"
-                      justifyContent="flex-end"
-                    />
-                  </Box>
-                </Flex>
-
-                <Flex py={3} alignItems="center">
-                  <Box width={1 / 2}>
-                    <Label htmlFor="autopilotMinchansize">Minimum channel size</Label>
-                  </Box>
-                  <Box ml="auto">
-                    <Input
-                      field="autopilotMinchansize"
-                      id="autopilotMinchansize"
-                      type="number"
-                      min="0"
-                      max="100000000"
-                      step="1"
-                      validate={this.validateAutopilotChansize}
-                      validateOnBlur
-                      validateOnChange={formState.invalid}
-                      ml="auto"
-                      justifyContent="flex-end"
-                    />
-                  </Box>
-                </Flex>
-
-                <Flex py={3} alignItems="center">
-                  <Box width={1 / 2}>
-                    <Label htmlFor="autopilotMaxchansize">Maximum channel size</Label>
-                  </Box>
-                  <Box ml="auto">
-                    <Input
-                      field="autopilotMaxchansize"
-                      id="autopilotMaxchansize"
-                      type="number"
-                      min="0"
-                      max="100000000"
-                      step="1"
-                      validate={this.validateAutopilotChansize}
-                      validateOnBlur
-                      validateOnChange={formState.invalid}
-                      ml="auto"
-                      justifyContent="flex-end"
-                    />
-                  </Box>
-                </Flex>
-              </React.Fragment>
-            ) : null}
-          </React.Fragment>
+            <WalletSettingsFormLocal
+              id="wallet-settings-form"
+              wallet={wallet}
+              startLnd={startLnd}
+            />
+          </>
         )}
-      </Form>
+
+        {wallet.type !== 'local' && (
+          <>
+            <WalletSettingsFormRemote
+              id="wallet-settings-form"
+              wallet={wallet}
+              startLnd={startLnd}
+            />
+          </>
+        )}
+      </React.Fragment>
     )
   }
 }
